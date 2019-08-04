@@ -1,0 +1,18 @@
+* {
+  font-family: 'Merriweather Sans', 'Avenir', Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  text-decoration: unset;
+  color: unset;
+}
+
+button {
+  border: none;
+  background: none;
+}
