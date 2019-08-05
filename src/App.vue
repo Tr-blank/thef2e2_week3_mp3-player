@@ -1,11 +1,11 @@
 <template lang="pug">
   main#app
     .player
-      .song__image(:style="{'background-image': `url(${albumsList[nowPlaying.albumID][nowPlaying.songID].image})`}")
+      .song__image(:style="{'background-image': `url(${albumsList[nowSongDetail.albumID][nowSongDetail.songID].image})`}")
       .song-container
         .song__info
-          .song__name {{albumsList[nowPlaying.albumID][nowPlaying.songID].name}}
-          .song__author {{albumsList[nowPlaying.albumID][nowPlaying.songID].singer}}
+          .song__name {{albumsList[nowSongDetail.albumID][nowSongDetail.songID].name}}
+          .song__author {{albumsList[nowSongDetail.albumID][nowSongDetail.songID].singer}}
         .song__control
           DragBar
           .song__buttons
@@ -13,7 +13,7 @@
               img(src="./assets/images/btn_ShufflePlayback.svg")
             .button__previous(@click="prevSong()")
               img(src="./assets/images/btn_Rewind.svg")
-            .button__play(v-if="!songStatus" @click="changeSongStatus()")
+            .button__play(v-if="!nowSongDetail.isPlaying" @click="changeSongStatus()")
               img(src="./assets/images/btn_Play.svg")
             .button__pause(v-else @click="changeSongStatus()")
               img(src="./assets/images/btn_pause.svg")
@@ -41,26 +41,28 @@ export default {
   data () {
     return {
       repeatStatus: 0,
-      songStatus: false,
       albumsList: song,
-      nowPlaying: {
+      nowSongDetail: {
+        isPlaying: false,
         albumID: 0,
-        songID: 0
+        songID: 0,
+        songTotalTime: 0,
+        currentlyTime: 0
       },
       audio: null
     }
   },
   mounted () {
-    // console.log(this.currentlySongSrc)
     this.audio = new Audio()
     if (this.audio.canPlayType('audio/mpeg;')) {
       this.audio.type = 'audio/mpeg'
       this.audio.src = this.currentlySongSrc
+      this.setSong()
     }
   },
   computed: {
     currentlySongSrc () {
-      return this.albumsList[this.nowPlaying.albumID][this.nowPlaying.songID].src
+      return this.albumsList[this.nowSongDetail.albumID][this.nowSongDetail.songID].src
     }
   },
   methods: {
@@ -71,23 +73,34 @@ export default {
       }
     },
     changeSongStatus () {
-      this.songStatus = !this.songStatus
-      if (this.songStatus) {
+      this.nowSongDetail.isPlaying = !this.nowSongDetail.isPlaying
+      if (this.nowSongDetail.isPlaying) {
         this.audio.play()
       } else {
         this.audio.pause()
       }
     },
     nextSong () {
-      this.nowPlaying.songID++
-      if (this.nowPlaying.songID > this.albumsList[this.nowPlaying.albumID].length - 1) {
-        this.nowPlaying.songID = 0
+      this.nowSongDetail.songID++
+      if (this.nowSongDetail.songID > this.albumsList[this.nowSongDetail.albumID].length - 1) {
+        this.nowSongDetail.songID = 0
       }
+      this.setSong()
     },
     prevSong () {
-      this.nowPlaying.songID--
-      if (this.nowPlaying.songID < 0) {
-        this.nowPlaying.songID = this.albumsList[this.nowPlaying.albumID].length - 1
+      this.nowSongDetail.songID--
+      if (this.nowSongDetail.songID < 0) {
+        this.nowSongDetail.songID = this.albumsList[this.nowSongDetail.albumID].length - 1
+      }
+      this.setSong()
+    },
+    setSong () {
+      this.audio.src = this.currentlySongSrc
+      this.audio.load()
+      this.nowSongDetail.songTotalTime = this.audio.duration
+      this.currentlyTime = this.audio.currentTime
+      if (this.nowSongDetail.isPlaying) {
+        this.audio.play()
       }
     }
   }

@@ -1,6 +1,7 @@
 # 第二屆前端修煉時光屋 第三週 - MP3 Player
 
-拖拉進度條組件
+- audio
+- 拖拉進度條組件
 
 ## Project setup
 ```
