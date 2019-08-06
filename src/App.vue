@@ -8,6 +8,9 @@
           .song__author {{albumsList[nowSongDetail.albumID][nowSongDetail.songID].singer}}
         .song__control
           DragBar
+          .song__itme
+            span {{nowSongDetail.currentlyTime | timeFormat}}
+            span {{nowSongDetail.totalTime | timeFormat}}
           .song__buttons
             .button__shuffle-playback
               img(src="./assets/images/btn_ShufflePlayback.svg")
@@ -46,7 +49,7 @@ export default {
         isPlaying: false,
         albumID: 0,
         songID: 0,
-        songTotalTime: 0,
+        totalTime: 0,
         currentlyTime: 0
       },
       audio: null
@@ -54,6 +57,7 @@ export default {
   },
   mounted () {
     this.audio = new Audio()
+    this.audio.addEventListener('canplay', this.canplay)
     if (this.audio.canPlayType('audio/mpeg;')) {
       this.audio.type = 'audio/mpeg'
       this.audio.src = this.currentlySongSrc
@@ -97,11 +101,14 @@ export default {
     setSong () {
       this.audio.src = this.currentlySongSrc
       this.audio.load()
-      this.nowSongDetail.songTotalTime = this.audio.duration
-      this.currentlyTime = this.audio.currentTime
       if (this.nowSongDetail.isPlaying) {
         this.audio.play()
       }
+    },
+    canplay (e) {
+      this.nowSongDetail.currentlyTime = this.audio.currentTime
+      this.nowSongDetail.totalTime = this.audio.duration
+      console.log(this.nowSongDetail)
     }
   }
 }
@@ -127,6 +134,12 @@ export default {
     padding: 60px 10px;
     margin-top: -100px;
     background-image: linear-gradient(rgba(255, 255, 255, 0) 0, #fff 90px);
+  &__itme
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #AEAEAE;
+    margin-bottom: 20px;
   &__info
     text-align: center;
     line-height: 1.5;

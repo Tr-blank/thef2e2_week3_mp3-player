@@ -52,7 +52,7 @@ export default {
 .dragBar
   background: #eee;
   height: 2px;
-  margin: 40px 0;
+  margin: 40px 0 10px;
   &__rate
     height: 2px;
     background: #000;
